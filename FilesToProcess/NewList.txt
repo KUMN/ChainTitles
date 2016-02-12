@@ -1,0 +1,13 @@
+{'concatstr': "Amy's new file line 1 to match", 'titles': ["Amy's new file line 1\n", '1 to match\n']}
+{'concatstr': "Amy's new file line 1 to MATCH", 'titles': ["Amy's new file line 1\n", 'line 1 to MATCH\n']}
+{'concatstr': "match Amy's new file line 1", 'titles': ["match Amy's\n", "Amy's new file line 1\n"]}
+{'concatstr': "Amy's new file line 1 to MATCH Amy's new", 'titles': ["Amy's new file line 1\n", "line 1 to MATCH Amy's new\n"]}
+{'concatstr': "line 1 to MATCH Amy's new file line 1", 'titles': ["line 1 to MATCH Amy's new\n", "Amy's new file line 1\n"]}
+{'concatstr': "Amy's new file line 1 to match Amy's new file line 1", 'titles': [["Amy's new file line 1\n", '1 to match\n'], ["match Amy's\n", "Amy's new file line 1\n"]]}
+{'concatstr': "match Amy's new file line 1 to match", 'titles': [["match Amy's\n", "Amy's new file line 1\n"], ["Amy's new file line 1\n", '1 to match\n']]}
+{'concatstr': "Amy's new file line 1 to MATCH Amy's new file line 1 to match", 'titles': [["Amy's new file line 1\n", "line 1 to MATCH Amy's new\n"], ["Amy's new file line 1\n", '1 to match\n']]}
+{'concatstr': "line 1 to MATCH Amy's new file line 1 to match", 'titles': [["line 1 to MATCH Amy's new\n", "Amy's new file line 1\n"], ["Amy's new file line 1\n", '1 to match\n']]}
+{'concatstr': "Amy's new file line 1 to match", 'titles': [["Amy's new file line 1\n", '1 to match\n'], '1 to match\n']}
+{'concatstr': "Amy's new file line 1 to match Amy's", 'titles': [["Amy's new file line 1\n", '1 to match\n'], "match Amy's\n"]}
+{'concatstr': "match Amy's new file line 1 to match", 'titles': ["match Amy's\n", ["Amy's new file line 1\n", '1 to match\n']]}
+{'concatstr': "line 1 to MATCH Amy's new file line 1 to match", 'titles': ["line 1 to MATCH Amy's new\n", ["Amy's new file line 1\n", '1 to match\n']]}

@@ -1,0 +1,1 @@
+{'GivenFile': 'Sample1.txt', 'GivenFileOffset': 23, 'DerivedFile' : 'NewList.txt', 'DerivedFileOffset' :104}
