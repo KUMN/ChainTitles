@@ -18,7 +18,8 @@ def config_write(config_name, given_file, given_file_offset, derived_file, deriv
     print (config_line)
     config_handle.write(config_line)
     config_handle.close()
-    
+
+''' old version    
 def write_list_of_dicts (fullpathandname, dict_list):
     file_handle = open (fullpathandname, 'a')
     for dictitem in dict_list:
@@ -27,7 +28,51 @@ def write_list_of_dicts (fullpathandname, dict_list):
         print (line_to_write)
         file_handle.write(line_to_write)
     file_handle.close()
+'''
+
+def uniqify_dict_list(inputlist):
+    outputlist = []
+    for item in inputlist:
+        if item in outputlist:
+            continue
+        else:
+            outputlist.append(item)
+    return outputlist  
+            
     
+def write_list_of_dicts (fullpathandname, dict_list):
+    
+    #make dictionary list unique
+    #new_dict_list = dict_list
+    #dict_list = uniqify_dict_list(new_dict_list)
+    #print ('with duplicates: ' + str (new_dict_list))
+    #print ('without duplicates: ' + str(dict_list))
+    
+    file_handle = open(fullpathandname, 'r')            
+    for read_line in file_handle.readlines():
+        dict_of_title = ast.literal_eval(read_line)
+        if (dict_of_title in dict_list):
+            dict_list.remove(dict_of_title)
+        '''    
+        for dictitem in dict_list:
+            concat_title = ' '.join(dictitem["concatstr"])
+            line_to_write = "{'concatstr': \"" + concat_title + "\", 'titles': " + str(dictitem["titles"]) +"}\n"
+            if cmp (line_to_write, read_line) == 0:
+                print dictitem
+                print read_line
+                dict_list.remove(dictitem)
+            break
+        '''
+    print ('after dedup with file')
+    print  dict_list
+    file_handle = open (fullpathandname, 'a')
+    for dictitem in dict_list:
+        concat_title = ' '.join(dictitem["concatstr"])
+        line_to_write = "{'concatstr': \"" + concat_title + "\", 'titles': " + str(dictitem["titles"]) +"}\n"
+        #print (line_to_write)
+        file_handle.write(line_to_write)
+    file_handle.close()  
+
 
 def read_line_titles(linetype, line_read):
     if linetype == 'original':
@@ -148,6 +193,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
     read_filehandle_2.seek(fileoffset)
     lineTwo = read_filehandle_2.readline()
     innerlistofdicts = listofdicts
+    num_titlesinOne = len(titlesinOne)
     
     while lineTwo:
         titleTwo, titlesinTwo = read_line_titles(processtype, lineTwo)
@@ -156,22 +202,48 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
         print ('Titles in two ' + str(titlesinTwo))
         print ('Titles in one ' + str(titlesinOne))
         #print (set(titlesinTwo).intersection(titlesinOne))
-        if (len(set(titlesinTwo).intersection(titlesinOne)) == 0):
+        num_titlesinCommon = len(set(titlesinTwo).intersection(titlesinOne))
+        
+        if ((num_titlesinCommon == 1)):
+            print ('One in common')
+            num_titlesinTwo = len(titlesinTwo)
+            if ((num_titlesinTwo > 1) and (num_titlesinOne > 1)):
+                print ('not single title list')
+                if (titlesinOne[num_titlesinOne-1] == titlesinTwo[0]):
+                    print ('they match at the ends')
+                    is_match, newconcatstr = is_a_match (titleOne, titleTwo)
+                    if (is_match == True):
+                        titles = titlesinOne + titlesinTwo[1:]
+                        #newdict = {'origstr': titleOne, 'concatstr': newconcatstr, 'titles': titles}
+                        newdict = {'concatstr': newconcatstr, 'titles': titles}
+                        if newdict not in innerlistofdicts:
+                            innerlistofdicts.append(newdict)
+    
+                if (titlesinTwo[num_titlesinTwo-1] == titlesinOne[0]):
+                    print ('they match at the ends')
+                    is_match, newconcatstr = is_a_match (titleTwo, titleOne)
+                    if (is_match == True):
+                        titles = titlesinTwo + titlesinOne[1:]
+                        #newdict = {'origstr': titleTwo, 'concatstr': newconcatstr, 'titles': titles}
+                        newdict = {'concatstr': newconcatstr, 'titles': titles}
+                        if newdict not in innerlistofdicts:
+                            innerlistofdicts.append(newdict)
+            
+        if (num_titlesinCommon == 0):
             is_match, newconcatstr = is_a_match (titleOne, titleTwo)
             if (is_match == True):
-                
-                newdict = {'origstr': titleOne, 'concatstr': newconcatstr, 'titles': titlesinOne+titlesinTwo}
-                print (newconcatstr)
-                print (newdict)
-                innerlistofdicts.append(newdict)
+                #newdict = {'origstr': titleOne, 'concatstr': newconcatstr, 'titles': titlesinOne+titlesinTwo}
+                newdict = {'concatstr': newconcatstr, 'titles': titlesinOne+titlesinTwo}
+                if newdict not in innerlistofdicts:
+                    innerlistofdicts.append(newdict)
          
             is_match, newconcatstr = is_a_match (titleTwo, titleOne)
             if (is_match == True):
                 #compare titles in One and Two - that there are no duplicates. If duplicates are there then ignore this match
-                newdict = {'origstr': titleTwo, 'concatstr': newconcatstr, 'titles': titlesinTwo+titlesinOne}
-                print (newconcatstr)
-                print (newdict)
-                innerlistofdicts.append(newdict)
+                #newdict = {'origstr': titleTwo, 'concatstr': newconcatstr, 'titles': titlesinTwo+titlesinOne}
+                newdict = {'concatstr': newconcatstr, 'titles': titlesinTwo+titlesinOne}
+                if newdict not in innerlistofdicts:
+                    innerlistofdicts.append(newdict)
         
         lineTwo = read_filehandle_2.readline()
     
@@ -236,10 +308,9 @@ def start_chaining(dir_path, filename_config):
         listofdicts = compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, titlesinOne, listofdicts)
     
     write_list_of_dicts(derived_file_pathandname, listofdicts)
+    #write to config 
     config_write(config_file_pathandname, given_filename, new_given_file_offset, derived_filename, new_derived_file_offset)
-    #write to config and loop to next line
-    
-    
+    #loop to next line
     
 
 
@@ -252,12 +323,26 @@ if __name__ == "__main__":
     directory_base = 'C:\Namita\Official\Projects\APP\C8\Olymp\Ch\FilesToProcess'
     filenameConfigs = 'Config.txt'
     
-    strlist = ['to', 'MATCH', "Amy's", 'new', 'file', 'line', '1']
-    strlist2 = ['to', 'me', 'MATCH']
+    strlist = ['to', 'MATCH', "Amy's", 'new', 'file', 'line', '1', 'new']
+    duplist = [1, 2, 3, 4, 1, 3, 4, 1, 5, 6]
+    
+    dict_list2 = [{'titles': ["match Amy's\n", "Amy's new file line 1\n", '1 to match\n'], 'origstr': "match Amy's new file line 1", 'concatstr': ['match', "Amy's", 'new', 'file', 'line', '1', 'to', 'match']}, {'titles': ["line 1 to MATCH Amy's new\n", "Amy's new file line 1\n", '1 to match\n'], 'origstr': "line 1 to MATCH Amy's new file line 1", 'concatstr': ['line', '1', 'to', 'MATCH', "Amy's", 'new', 'file', 'line', '1', 'to', 'match']}, {'titles': ["Amy's new file line 1\n", '1 to match\n', "match Amy's\n"], 'origstr': "Amy's new file line 1 to match", 'concatstr': ["Amy's", 'new', 'file', 'line', '1', 'to', 'match', "Amy's"]}, {'titles': ["match Amy's\n", "Amy's new file line 1\n", '1 to match\n'], 'origstr': "match Amy's\n", 'concatstr': ['match', "Amy's", 'new', 'file', 'line', '1', 'to', 'match']}, {'titles': ["line 1 to MATCH Amy's new\n", "Amy's new file line 1\n", '1 to match\n'], 'origstr': "line 1 to MATCH Amy's new\n", 'concatstr': ['line', '1', 'to', 'MATCH', "Amy's", 'new', 'file', 'line', '1', 'to', 'match']}]
+    
+    #dict_list2 = [{"concatstr": ['to', 'me', 'MATCH'], "titles": ['a', 'b', 'c']}, {"concatstr": ['to', 'me', 'MATCH'], "titles": ['a', 'b', 'c']}, {"concatstr": ['to', 'me', 'MATCH'], "titles": ['a', 'b', 'c']}]
+    uniquelist  = uniqify_dict_list(dict_list2)
+    
+    
+    print dict_list2
+    print uniquelist
+    '''
+    print strlist
+    strlist.remove('new')
+    strlist.remove('new')
+    print strlist
+    '''
     #print (strlist + strlist2)
     #print (len(set(strlist).intersection(strlist2)))
     #print ' '.join(strlist)
-    
     
     start_chaining(directory_base, filenameConfigs)
     
