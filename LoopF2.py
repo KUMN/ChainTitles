@@ -107,14 +107,14 @@ def read_line_titles(linetype, line_read):
     if linetype == 'original':
         title = line_read
         title_list = [line_read]
-        orig_str = line_read.rstrip('\n')
+        #orig_str = line_read.rstrip('\n')
         print 
     else:
         dict_of_title = ast.literal_eval(line_read)
         title = dict_of_title['concatstr']
         title_list = dict_of_title['titles']
-        orig_str = dict_of_title['origstr']
-    return title, title_list, orig_str
+        #orig_str = dict_of_title['origstr']
+    return title, title_list
     
     
 
@@ -214,7 +214,7 @@ def compare_titles_in_files(dir_to_read, filename1, filename2):
     read_filehandle_2.close()
 '''
 
-def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, titlesinOne, listofdicts, origstrOne):
+def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, titlesinOne, listofdicts):
     #filepathandname = dir_to_read + '\\' + filename1
     #read_filehandle_1 = open(filepathandname, 'r')
     #titleOne = read_filehandle_1.readline()
@@ -228,7 +228,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
     num_titlesinOne = len(titlesinOne)
     
     while lineTwo:
-        titleTwo, titlesinTwo, origstrTwo = read_line_titles(processtype, lineTwo)
+        titleTwo, titlesinTwo = read_line_titles(processtype, lineTwo)
         #print (titleOne + ' ' + titleTwo)
         #compare titles in One and Two - that there are no duplicates. If duplicates are there then ignore this match
         #print ('Titles in two ' + str(titlesinTwo))
@@ -248,7 +248,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
                         titles = titlesinOne + titlesinTwo[1:]
                         #newdict = {'origstr': titleOne, 'concatstr': newconcatstr, 'titles': titles}
                         newconcatstr = ' '.join(newconcatstr)
-                        newdict = {'origstr': origstrOne, 'concatstr': newconcatstr, 'titles': titles}
+                        newdict = {'concatstr': newconcatstr, 'titles': titles}
                         if newdict not in innerlistofdicts:
                             innerlistofdicts.append(newdict)
     
@@ -259,14 +259,14 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
                         titles = titlesinTwo + titlesinOne[1:]
                         #newdict = {'origstr': titleTwo, 'concatstr': newconcatstr, 'titles': titles}
                         newconcatstr = ' '.join(newconcatstr)
-                        newdict = {'origstr': origstrOne, 'concatstr': newconcatstr, 'titles': titles}
+                        newdict = {'concatstr': newconcatstr, 'titles': titles}
                         if newdict not in innerlistofdicts:
                             innerlistofdicts.append(newdict)
         if ((num_titlesinCommon == 0)):
             is_match, newconcatstr = is_a_match (titleOne, titleTwo)
             if (is_match == True):
                 newconcatstr = ' '.join(newconcatstr)
-                newdict = {'origstr': origstrOne, 'concatstr': newconcatstr, 'titles': titlesinOne+titlesinTwo}
+                newdict = {'concatstr': newconcatstr, 'titles': titlesinOne+titlesinTwo}
                 if newdict not in innerlistofdicts:
                     #print (newconcatstr)
                     #print (newdict)
@@ -275,7 +275,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
             is_match, newconcatstr = is_a_match (titleTwo, titleOne)
             if (is_match == True):
                 newconcatstr = ' '.join(newconcatstr)
-                newdict = {'origstr': origstrOne, 'concatstr': newconcatstr, 'titles': titlesinTwo+titlesinOne}
+                newdict = {'concatstr': newconcatstr, 'titles': titlesinTwo+titlesinOne}
                 if newdict not in innerlistofdicts:
                     #print (newconcatstr)
                     #print (newdict)
@@ -390,15 +390,15 @@ def process_titles_in_file(dir_path, filename_config):
         while lineOne:
             new_given_file_offset = given_filehandle.tell()
             fileoffset = new_given_file_offset
-            titleOne, titlesinOne, origstrOne = read_line_titles(processtype, lineOne)
+            titleOne, titlesinOne = read_line_titles(processtype, lineOne)
             '''
             if (processtype == 'original'):
                 fileoffset = new_given_file_offset
             else:
                 fileoffset = new_given_file_offset
             ''' 
-            listofdicts = compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, titlesinOne, listofdicts, origstrOne)
-            origstrOffset = write_list_of_dicts(derived_file_pathandname, listofdicts)
+            listofdicts = compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, titlesinOne, listofdicts)
+            write_list_of_dicts(derived_file_pathandname, listofdicts)
             #titlestr_offset_dict[origstrOne] = origstrOffset
             #new_derived_file_offset = origstrOffset
             #config_write_line(config_file_pathandname, given_filename, new_given_file_offset, derived_filename, new_derived_file_offset, round_counter, titlestr_offset_dict)
