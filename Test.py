@@ -50,8 +50,11 @@ def write_list_of_dicts (fullpathandname, dict_list):
     
     file_handle = open(fullpathandname, 'r')            
     for read_line in file_handle.readlines():
+        print ('loop through file')
         dict_of_title = ast.literal_eval(read_line)
+        #print dict_of_title
         if (dict_of_title in dict_list):
+            print ('duplicate found')
             dict_list.remove(dict_of_title)
         '''    
         for dictitem in dict_list:
@@ -67,7 +70,8 @@ def write_list_of_dicts (fullpathandname, dict_list):
     print  dict_list
     file_handle = open (fullpathandname, 'a')
     for dictitem in dict_list:
-        concat_title = ' '.join(dictitem["concatstr"])
+        #concat_title = ' '.join(dictitem["concatstr"])
+        concat_title = dictitem["concatstr"]
         line_to_write = "{'concatstr': \"" + concat_title + "\", 'titles': " + str(dictitem["titles"]) +"}\n"
         #print (line_to_write)
         file_handle.write(line_to_write)
@@ -126,7 +130,7 @@ def is_a_match (titleOne, titleTwo):
             #open file and write to its bottom the new string|filename
             #open filename write the string and add titleTwo
             concatstr = split_titleA[:startA+nextA] + split_titleB[0:]
-            #print (concatstr)
+            print (concatstr)
         else:
             nextA = nextA + 1
             i = startA + nextA
@@ -215,6 +219,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
                     if (is_match == True):
                         titles = titlesinOne + titlesinTwo[1:]
                         #newdict = {'origstr': titleOne, 'concatstr': newconcatstr, 'titles': titles}
+                        newconcatstr = ' '.join(newconcatstr)
                         newdict = {'concatstr': newconcatstr, 'titles': titles}
                         if newdict not in innerlistofdicts:
                             innerlistofdicts.append(newdict)
@@ -225,6 +230,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
                     if (is_match == True):
                         titles = titlesinTwo + titlesinOne[1:]
                         #newdict = {'origstr': titleTwo, 'concatstr': newconcatstr, 'titles': titles}
+                        newconcatstr = ' '.join(newconcatstr)
                         newdict = {'concatstr': newconcatstr, 'titles': titles}
                         if newdict not in innerlistofdicts:
                             innerlistofdicts.append(newdict)
@@ -233,6 +239,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
             is_match, newconcatstr = is_a_match (titleOne, titleTwo)
             if (is_match == True):
                 #newdict = {'origstr': titleOne, 'concatstr': newconcatstr, 'titles': titlesinOne+titlesinTwo}
+                newconcatstr = ' '.join(newconcatstr)
                 newdict = {'concatstr': newconcatstr, 'titles': titlesinOne+titlesinTwo}
                 if newdict not in innerlistofdicts:
                     innerlistofdicts.append(newdict)
@@ -241,6 +248,7 @@ def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, 
             if (is_match == True):
                 #compare titles in One and Two - that there are no duplicates. If duplicates are there then ignore this match
                 #newdict = {'origstr': titleTwo, 'concatstr': newconcatstr, 'titles': titlesinTwo+titlesinOne}
+                newconcatstr = ' '.join(newconcatstr)
                 newdict = {'concatstr': newconcatstr, 'titles': titlesinTwo+titlesinOne}
                 if newdict not in innerlistofdicts:
                     innerlistofdicts.append(newdict)
