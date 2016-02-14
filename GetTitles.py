@@ -32,8 +32,8 @@ def get_max_titles(fromfilenameandpath, tofilenameandpath):
         if (len(title_list) > max_num_of_titles):
             max_num_of_titles = len(title_list)
             max_title_list = title_list
-            #print max_num_of_titles
-            #print max_title_list
+            print max_num_of_titles
+            print max_title_list
             #print counter
     write_list_of_titles(tofilenameandpath, max_title_list)
     

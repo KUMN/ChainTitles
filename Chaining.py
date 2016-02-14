@@ -93,49 +93,7 @@ def is_a_match (titleOne, titleTwo):
     #return the list of dicts {origstr:, concatstr: , titlesinstr:}
 
     
-'''
-def compare_titles_in_files(dir_to_read, filename1, filename2):
-    filepathandname = dir_to_read + '\\' + filename1
-    read_filehandle_1 = open(filepathandname, 'r')
-    titleOne = read_filehandle_1.readline()
-    fileoffset = read_filehandle_1.tell()
-    read_filehandle_1.close()
-    
-    read_filehandle_2 = open(filepathandname, 'r')
-    read_filehandle_2.seek(fileoffset)
-    lineTwo = read_filehandle_2.readline()
-    
-    listofdicts = []
-    
-    while lineTwo:
-        split_line = lineTwo.split('|')
-        if len(split_line) > 1:
-            titleTwo = split_line[0]
-            titlesinTwo = split_line[1]
-        else:
-            titleTwo = lineTwo
-            titlesinTwo = titleTwo
-        print (titleOne + ' ' + titleTwo)
-        is_match, newconcatstr = is_a_match (titleOne, titleTwo)
-        if (is_match == True):
-            newdict = {'origstr': titleOne, 'concatstr': newconcatstr, 'titles': [titleOne, titlesinTwo]}
-            print (newconcatstr)
-            print (newdict)
-            listofdicts.append(newdict)
-         
-        is_match, newconcatstr = is_a_match (titleTwo, titleOne)
-        if (is_match == True):
-            newdict = {'origstr': titleTwo, 'concatstr': newconcatstr, 'titles': [titlesinTwo, titleOne]}
-            print (newconcatstr)
-            print (newdict)
-            listofdicts.append(newdict)
-        
-        lineTwo = read_filehandle_2.readline()
-    
-    print listofdicts
-    #write offsets
-    read_filehandle_2.close()
-'''
+
 
 def compare_titles_in_files(processtype, filepathandname, fileoffset, titleOne, titlesinOne, listofdicts):
     #filepathandname = dir_to_read + '\\' + filename1
